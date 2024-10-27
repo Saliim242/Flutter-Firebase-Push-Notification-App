@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_notification_app/controllers/auth_services.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key});
@@ -19,6 +20,10 @@ class _SignUpPageState extends State<SignUpPage> {
     _emailController.dispose();
     _passwordController.dispose();
   }
+
+  // void signUpUser(BuildContext context, String email, String password) {
+  //   AuthService().signUp(context, email, password);
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -56,16 +61,41 @@ class _SignUpPageState extends State<SignUpPage> {
                 ),
               ),
               SizedBox(height: 20),
-              Container(
-                alignment: Alignment.center,
-                decoration: BoxDecoration(color: Colors.blueGrey),
-                width: MediaQuery.of(context).size.width,
-                height: 65,
-                child: Text(
-                  "Sign Up]",
-                  style: TextStyle(
-                    fontSize: 25,
-                    color: Colors.white,
+              GestureDetector(
+                onTap: () {
+                  AuthServices.createAnAcountEmailAndPassword(
+                    email: _emailController.text.trim(),
+                    password: _passwordController.text.trim(),
+                  ).then((onValue) {
+                    if (onValue == "User created successfully") {
+                      // Scaffold.of(context).showSnackBar(SnackBar(content: Text("User created successfully")));
+                      // Navigate to Home page
+                      Navigator.pushNamedAndRemoveUntil(
+                          context, '/home', (route) => false);
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            onValue,
+                            style: TextStyle(fontSize: 16, color: Colors.white),
+                          ),
+                          backgroundColor: Colors.redAccent,
+                        ),
+                      );
+                    }
+                  });
+                },
+                child: Container(
+                  alignment: Alignment.center,
+                  decoration: BoxDecoration(color: Colors.blueGrey),
+                  width: MediaQuery.of(context).size.width,
+                  height: 65,
+                  child: Text(
+                    "Sign Up",
+                    style: TextStyle(
+                      fontSize: 25,
+                      color: Colors.white,
+                    ),
                   ),
                 ),
               ),
@@ -78,6 +108,7 @@ class _SignUpPageState extends State<SignUpPage> {
                   SizedBox(width: 8),
                   GestureDetector(
                     onTap: () {
+                      Navigator.pop(context);
                       // Navigate to Sign In page
                     },
                     child:
